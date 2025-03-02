@@ -16,6 +16,9 @@ public class PlayerMovement : MonoBehaviour
     private bool isGrounded; // Tracks whether the player is on the ground
     private int jumpsRemaining; // Tracks how many jumps the player has left
 
+    public Animator animator; // Reference to the Animator component
+
+
     void Start()
     {
         jumpsRemaining = maxJumps; // Initialize jumps
@@ -36,22 +39,34 @@ public class PlayerMovement : MonoBehaviour
         movement.x = Input.GetAxisRaw("Horizontal"); // Left/Right movement
         movement.z = Input.GetAxisRaw("Vertical"); // Forward/Backward movement
 
-        // Normalize movement vector to prevent faster diagonal movement
+        // Normalize movement to prevent faster diagonal movement
         movement = movement.normalized;
+
+        // Set animation speed parameter
+        animator.SetFloat("Speed", movement.magnitude * moveSpeed);
+
+        // Rotate to face movement direction
+        if (movement != Vector3.zero)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(movement);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 10f);
+        }
 
         // Jumping
         if (Input.GetButtonDown("Jump"))
         {
             if (isGrounded)
             {
-                Jump(); // Jump when grounded
+                Jump();
             }
             else if (jumpsRemaining > 0)
             {
-                Jump(); // Double jump in mid-air
+                Jump();
             }
         }
     }
+
+
 
     void FixedUpdate()
     {

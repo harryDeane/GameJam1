@@ -33,6 +33,16 @@ public class CarEvent : MonoBehaviour
             DropBox(); // Drop the box when colliding with the speed bump
             isMoving = false; // Stop the car
         }
+
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            isMoving = false; // Stop the car
+            GameManager gameManager = FindObjectOfType<GameManager>();
+            if (gameManager != null)
+            {
+                gameManager.EndGame("Explosion");
+            }
+        }
     }
 
     private void DropBox()

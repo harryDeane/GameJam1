@@ -1,42 +1,49 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;  // If you want to display UI elements like a Game Over text
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    public Text gameOverText;  // A UI Text element to show Game Over message
-    private bool gameIsOver = false;
+    public Animator playerAnimator; // Reference to player's Animator
+    public GameObject player; // Reference to the player object
 
-    void Start()
+    public void EndGame(string deathType)
     {
-        // Ensure the game is running initially and game over text is hidden
-        gameOverText.gameObject.SetActive(false);
-        gameIsOver = false;
+        // Disable player movement (if applicable)
+        PlayerMovement playerMovement = player.GetComponent<PlayerMovement>();
+        if (playerMovement != null)
+        {
+            playerMovement.enabled = false;
+        }
+
+
+        // Play different animations based on death type
+        if (playerAnimator != null)
+        {
+            switch (deathType)
+            {
+                case "Bucket":
+                    playerAnimator.SetTrigger("DeathByBucket");
+                    break;
+                case "Fire":
+                    playerAnimator.SetTrigger("DeathByFire");
+                    break;
+                case "Explosion":
+                    playerAnimator.SetTrigger("DeathByExplosion");
+                    break;
+                default:
+                    playerAnimator.SetTrigger("GenericDeath");
+                    break;
+            }
+        }
+
+        // Start the restart process after a delay
+        StartCoroutine(RestartGame());
     }
 
-    public void EndGame()
+    private IEnumerator RestartGame()
     {
-        if (gameIsOver)
-            return;
-
-        gameIsOver = true;
-        // Display the game over UI (if you have one)
-        gameOverText.gameObject.SetActive(true);
-        gameOverText.text = "Game Over! The Canister Exploded!";
-
-        // Optionally, you can stop all other game activities here
-        Time.timeScale = 0f;  // Freeze time to stop all gameplay
-
-        // You can also add a restart function if needed
-        // Invoke("RestartGame", 3f);  // Restart after 3 seconds
-    }
-
-    // Example Restart Function (if you want the player to restart the game)
-    public void RestartGame()
-    {
-        Time.timeScale = 1f;  // Unfreeze time
-        // Reload the scene or reset necessary values
-        UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+        yield return new WaitForSeconds(3f); // Wait for 3 seconds
+        SceneManager.LoadScene("End"); // Load the restart scene
     }
 }

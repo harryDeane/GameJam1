@@ -83,7 +83,7 @@ public class FireSpread : MonoBehaviour
         {
             canisterScript.Explode();
             // Call the GameManager's EndGame method when the canister explodes
-            gameManager.EndGame();
+            gameManager.EndGame("Explosion");
         }
 
         Debug.Log("Canister Exploded!");
@@ -91,7 +91,7 @@ public class FireSpread : MonoBehaviour
 
     public void ExtinguishFire()
     {
-        fireExtinguished = true;
+        fireExtinguished = false;
         Debug.Log("Fire Extinguished!");
     }
 }

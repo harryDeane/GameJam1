@@ -31,6 +31,7 @@ public class BallEvent : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             canInteract = true;
+            StopBall();
         }
     }
 
